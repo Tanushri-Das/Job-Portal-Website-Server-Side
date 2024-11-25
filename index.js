@@ -27,7 +27,10 @@ async function run() {
     const categoriesCollection = client
       .db("JobPortal")
       .collection("categories");
+    const companiesCollection = client.db("JobPortal").collection("companies");
+    const contactsCollection = client.db("JobPortal").collection("contacts");
     const jobsCollection = client.db("JobPortal").collection("jobs");
+    const reviewsCollection = client.db("JobPortal").collection("reviews");
     const usersCollection = client.db("JobPortal").collection("users");
     const appliedJobsCollection = client
       .db("JobPortal")
@@ -37,7 +40,14 @@ async function run() {
       const result = await categoriesCollection.find().toArray();
       res.send(result);
     });
-
+    app.get("/companies", async (req, res) => {
+      const result = await companiesCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/reviews", async (req, res) => {
+      const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    });
     app.get("/jobs", async (req, res) => {
       const result = await jobsCollection.find().toArray();
       res.send(result);
@@ -47,6 +57,11 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await jobsCollection.findOne(query);
+      res.send(result);
+    });
+    app.post("/contact", async (req, res) => {
+      const newItem = req.body;
+      const result = await contactsCollection.insertOne(newItem);
       res.send(result);
     });
 
@@ -88,10 +103,6 @@ async function run() {
     // applied
     app.post("/applied-jobs", async (req, res) => {
       const item = req.body;
-
-      // Example: Log the base64 string of the resume
-      console.log(item.resume);
-
       const result = await appliedJobsCollection.insertOne(item);
       res.send(result);
     });
