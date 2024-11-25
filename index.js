@@ -49,8 +49,20 @@ async function run() {
       res.send(result);
     });
     app.get("/jobs", async (req, res) => {
-      const result = await jobsCollection.find().toArray();
-      res.send(result);
+      const { role } = req.query; // role কে query parameter থেকে নিচ্ছি
+
+      try {
+        let query = {};
+        if (role) {
+          query.role = role; // role যদি থাকে তাহলে query তে যোগ করব
+        }
+
+        const result = await jobsCollection.find(query).toArray();
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+        res.status(500).send({ message: "Internal server error" });
+      }
     });
 
     app.get("/jobs/:id", async (req, res) => {
